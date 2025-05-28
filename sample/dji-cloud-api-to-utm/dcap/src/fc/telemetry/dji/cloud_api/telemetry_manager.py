@@ -273,11 +273,14 @@ class TelemetryManagerImpl:
         elif mode_code in self.operating_status_table:
             return UasState.Value('INFLIGHT_OPERATING')
         elif mode_code in self.inflight_status_table:
-            # TODO ミッション中ホバリングの判定仕様整理後に合わせて実装する
+            # mission_idが存在する場合はミッション中ホバリングと判定
             if mission_id is not None:
-                return UasState.Value('INFLIGHT_MISSION_INTERRUPT')
+                return UasState.Value('INFLIGHT_MISSION_HOVER')
             return UasState.Value('INFLIGHT')
         elif mode_code in self.mission_status_table:
             return UasState.Value('INFLIGHT_MISSION')
+        elif mission_id is not None:
+            # mode_codeが該当せずmission_idのみ存在する場合はミッション中断扱い
+            return UasState.Value('INFLIGHT_MISSION_INTERRUPT')
         else:
             return None
